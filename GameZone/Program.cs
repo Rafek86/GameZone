@@ -1,4 +1,5 @@
 using GameZone.Data;
+using GameZone.Sevices;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameZone
@@ -12,6 +13,10 @@ namespace GameZone
                 // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(ConnectionString));
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<ICategoriesService,CategoriesService>(); 
+            builder.Services.AddScoped<IDevicesService, DevicesService>(); 
+            builder.Services.AddScoped<IGamesService, GamesService>(); 
 
             var app = builder.Build();
 
