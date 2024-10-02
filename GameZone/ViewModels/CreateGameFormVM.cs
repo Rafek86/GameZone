@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using GameZone.Attributes;
+using GameZone.Settings;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace GameZone.ViewModels
@@ -22,6 +24,8 @@ namespace GameZone.ViewModels
         public IEnumerable<SelectListItem> Devices { get; set; } = Enumerable.Empty<SelectListItem>();
 
         //Validate Extention and Size
+        [AllowExtentions(FileSettings.AllowExtentioins)
+            ,MaxSize(FileSettings.MaxFileSizeInBytes)]
         public IFormFile Cover { get; set; } = default!;
     }
 }
