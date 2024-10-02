@@ -2,6 +2,7 @@
 using GameZone.Models;
 using GameZone.Settings;
 using GameZone.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameZone.Sevices
 {
@@ -17,6 +18,17 @@ namespace GameZone.Sevices
              _context = context;
             _webHostEnvironment = webHostEnvironment;
             _imagesPath = $"{_webHostEnvironment.WebRootPath}{FileSettings.ImagesPath}";
+        }
+
+
+        public IEnumerable<Game> GetAll()
+        {
+           return _context.Games
+                .Include(g=>g.Category)
+                .Include(g=>g.Devices)
+                .ThenInclude(d=>d.Device)
+                .AsNoTracking()
+                .ToList();
         }
 
         public async Task Create(CreateGameFormVM model)
@@ -39,5 +51,7 @@ namespace GameZone.Sevices
             _context.Add(game);
             _context.SaveChanges();
         }
+
+   
     }
 }
