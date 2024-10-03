@@ -9,7 +9,6 @@ namespace GameZone.Controllers
 {
     public class GamesController : Controller
     {
-        private ApplicationDbContext _context;
         private readonly ICategoriesService _categoriesService;
         private readonly IDevicesService _devicesService;
         private readonly IGamesService _gamesService;
@@ -18,15 +17,26 @@ namespace GameZone.Controllers
             ,ICategoriesService categoriesService
             ,IDevicesService devicesService
             ,IGamesService gamesService) { 
-            _context = context;
             _categoriesService = categoriesService; 
             _devicesService = devicesService;
             _gamesService = gamesService;
         }
+
         public IActionResult Index()
         {
-            return View();
+            var games = _gamesService.GetAll();
+            return View(games);
         }
+
+        public IActionResult Details(int id) { 
+            
+            Game game= _gamesService.GetById(id);
+            if (game is null) {
+               return NotFound();
+            }
+            return View(game);  
+        }
+
         [HttpGet]
         public IActionResult Create() 
         {
@@ -55,6 +65,57 @@ namespace GameZone.Controllers
             //SaveCover to Server 
             await _gamesService.Create(model);
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public IActionResult Update(int id) {
+
+            Game game = _gamesService.GetById(id);
+            if (game is null)
+            {
+                return NotFound();
+            }
+            EditGameFormVM viewModel = new()
+            {
+                Id = id,
+                Name =game.Name,
+                Description =game.Description,  
+                CategoryId = game.CategoryId,   
+                SelectedDevices =game.Devices.Select(x=> x.DeviceId).ToList(),
+                categories = _categoriesService.GetSelectList(),
+                Devices = _devicesService.GetDevices(),
+                CurrentCover = game.Cover
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(EditGameFormVM model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                model.categories = _categoriesService.GetSelectList();
+                model.Devices = _devicesService.GetDevices();
+                return View(model);
+            }
+            var game=await _gamesService.Update(model);
+
+            if (game is null)
+                return BadRequest();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int id) 
+        {
+            var isDeleted = _gamesService.Delete(id);   
+            if (isDeleted)
+                return Ok();
+            else 
+                return BadRequest();
         }
     }
 }

@@ -19,7 +19,8 @@ namespace GameZone.Sevices
             {
                 Text = c.Name,
                 Value = c.Id.ToString()
-            }).OrderBy(c => c.Text)
+            })
+            .OrderBy(c => c.Text)
             .AsNoTracking()
             .ToList();
 

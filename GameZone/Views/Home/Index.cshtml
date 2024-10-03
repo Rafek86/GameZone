@@ -16,10 +16,11 @@ else
         @foreach (var game in Model)
         {
             <div class="col-lg-4 col-md-6">
-                <div class="card-body" style="background-image: url('@($"{FileSettings.ImagesPath}/{game.Cover}")');background-size :cover;background-position:center;height :500px;">
-               <div class="d-flex align-items-end h-100">
+                <a class="card border-success mb-3 text-decoration-none rounded-3" asp-controller="Games" asp-action="Details" asp-route-id="@game.Id">
+                   <div class="card-body" style="background-image: url('@($"{FileSettings.ImagesPath}/{game.Cover}")');background-size :cover;background-position:center;height :500px;">
+                   <div class="d-flex align-items-end h-100">
                         <span class="badge bg-primary rounded-0 fs-5">@game.Category.Name</span>
-               </div>
+                </div>
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center" >
                     <h5>@game.Name</h5>
@@ -29,7 +30,8 @@ else
                         <i class="@gameDevice.Device.Icon me-1" ></i>
                         }
                     </div>
-                </div>
+                  </div>
+                  </a>
             </div>
         }
     </div>
